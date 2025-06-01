@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enquiry - Just Digital</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #0f0f3e;
+      --accent: #ff003c;
+      --neon-blue: #00f7ff;
+      --neon-red: #ff0077;
+      --light: #f5f6fa;
+      --dark: #1e1e2f;
+      --glow-blue: 0 0 10px rgba(0, 247, 255, 0.7);
+      --glow-red: 0 0 10px rgba(255, 0, 119, 0.7);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: var(--dark);
+      color: #fff;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      background-image: 
+        radial-gradient(circle at 20% 30%, rgba(0, 247, 255, 0.05) 0%, transparent 20%),
+        radial-gradient(circle at 80% 70%, rgba(255, 0, 119, 0.05) 0%, transparent 20%);
+    }
+
+    header {
+      background: rgba(15, 15, 62, 0.95);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      width: 100%;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+      transition: all 0.3s;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      text-decoration: none;
+      color: var(--neon-blue);
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo::before {
+      content: '';
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: var(--neon-blue);
+      border-radius: 50%;
+      top: -5px;
+      left: -10px;
+      z-index: -1;
+      opacity: 0.3;
+      filter: blur(5px);
+    }
+
+    .logo span {
+      color: var(--neon-red);
+      position: relative;
+    }
+
+    .logo span::before {
+      content: '';
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      background: var(--neon-red);
+      border-radius: 50%;
+      top: -5px;
+      right: -5px;
+      z-index: -1;
+      opacity: 0.3;
+      filter: blur(5px);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 30px;
+    }
+
+    .nav-links li {
+      list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-weight: 600;
+      color: #fff;
+      position: relative;
+      padding: 5px 10px;
+      border-radius: 5px;
+      transition: all 0.3s;
+    }
+
+    .nav-links a::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border-radius: 5px;
+      background: linear-gradient(45deg, var(--neon-blue), var(--neon-red));
+      z-index: -1;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .nav-links a:hover::before {
+      opacity: 0.2;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: var(--neon-blue);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover::after {
+      width: 100%;
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: white;
+      font-size: 24px;
+      cursor: pointer;
+      z-index: 1001;
+    }
+
+    .enquiry-container {
+      max-width: 800px;
+      margin: 120px auto 80px;
+      padding: 0 20px;
+    }
+
+    .enquiry-title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .enquiry-title h1 {
+      font-size: 36px;
+      color: var(--neon-blue);
+      text-shadow: var(--glow-blue);
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .enquiry-title h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-red));
+      border-radius: 3px;
+    }
+
+    .enquiry-title p {
+      color: #aaa;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .enquiry-form {
+      background: rgba(17, 17, 17, 0.7);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 0 30px rgba(0, 247, 255, 0.1);
+      border: 1px solid rgba(0, 247, 255, 0.2);
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--neon-blue);
+      font-weight: 600;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(0, 247, 255, 0.3);
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--neon-blue);
+      box-shadow: 0 0 10px var(--neon-blue);
+    }
+
+    select.form-control {
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2300f7ff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      background-size: 15px;
+    }
+
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 8px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-red));
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px var(--neon-blue);
+      margin-top: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .submit-btn::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        transparent,
+        transparent,
+        transparent,
+        rgba(255, 255, 255, 0.3),
+        transparent,
+        transparent,
+        transparent
+      );
+      transform: rotate(30deg);
+      transition: all 0.5s;
+    }
+
+    .submit-btn:hover {
+      box-shadow: 0 0 25px var(--neon-red);
+      transform: translateY(-3px);
+    }
+
+    .submit-btn:hover::before {
+      left: 100%;
+    }
+
+    .confirmation-message {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: rgba(0, 200, 0, 0.2);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      border-radius: 8px;
+      margin-top: 20px;
+      color: #00ff00;
+    }
+
+    .error-message {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: rgba(200, 0, 0, 0.2);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      border-radius: 8px;
+      margin-top: 20px;
+      color: #ff0000;
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 20px;
+      background: #0f0f3e;
+      color: #888;
+      position: relative;
+    }
+
+    footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, var(--neon-blue), var(--neon-red));
+    }
+
+    @media (max-width: 768px) {
+      .mobile-menu-btn {
+        display: block;
+      }
+
+      .nav-links {
+        flex-direction: column;
+        position: fixed;
+        top: 70px;
+        left: -100%;
+        background: rgba(15, 15, 62, 0.95);
+        backdrop-filter: blur(10px);
+        width: 100%;
+        padding: 20px;
+        transition: 0.3s;
+        gap: 15px;
+      }
+
+      .nav-links.active {
+        left: 0;
+      }
+
+      .enquiry-container {
+        margin-top: 100px;
+      }
+
+      .enquiry-form {
+        padding: 25px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav>
+      <a href="index.html" class="logo"><i class="fas fa-bolt"></i>Just<span>Digital</span></a>
+      <button class="mobile-menu-btn" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+        <i class="fas fa-bars"></i>
+      </button>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="enquiry.html" class="active">Enquiry</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="enquiry-container">
+    <div class="enquiry-title">
+      <h1>Project Enquiry</h1>
+      <p>Fill out the form below to get started with your project. Our team will review your details and get back to you within 24 hours.</p>
+    </div>
+
+    <form id="enquiryForm" class="enquiry-form">
+      <div class="form-group">
+        <label for="serviceType">Service Type</label>
+        <select id="serviceType" class="form-control" required>
+          <option value="">Select a service</option>
+          <option value="web-development">Web Development</option>
+          <option value="video-editing">Video Editing</option>
+          <option value="graphic-design">Graphic Design</option>
+          <option value="app-development">App Development</option>
+          <option value="digital-marketing">Digital Marketing</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="projectTitle">Project Title</label>
+        <input type="text" id="projectTitle" class="form-control" placeholder="e.g. Company Website Redesign" required>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Project Description</label>
+        <textarea id="description" class="form-control" placeholder="Describe your project in detail..." required></textarea>
+      </div>
+    <div class="form-group">
+  <label for="media">Upload Image/Video (optional)</label>
+  <input type="file" id="media" accept="image/*,video/*" class="form-control">
+  <div id="preview" style="margin-top:10px;"></div>
+    </div>
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" id="fullName" class="form-control" placeholder="Your full name" required>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" class="form-control" placeholder="your@email.com" required>
+      </div>
+
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" class="form-control" placeholder="+1 (123) 456-7890">
+      </div>
+
+      <div class="form-group">
+        <label for="budget">Estimated Budget (USD)</label>
+        <select id="budget" class="form-control">
+          <option value="">Select budget range</option>
+          <option value="25-100">$25 - $100</option>
+          <option value="500-1000">$500 - $1,000</option>
+          <option value="1000-5000">$1,000 - $5,000</option>
+          <option value="5000-10000">$5,000 - $10,000</option>
+          <option value="10000+">$10,000+</option>
+          <option value="not-sure">Not sure yet</option>
+        </select>
+      </div>
+
+      <button type="submit" class="submit-btn">Submit Enquiry</button>
+      <div class="confirmation-message" id="confirmationMessage">
+        <i class="fas fa-check-circle"></i> Thank you! Your enquiry has been submitted successfully.
+      </div>
+      <div class="error-message" id="errorMessage">
+        <i class="fas fa-exclamation-circle"></i> Error submitting your enquiry. Please try again.
+      </div>
+    </form>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 Just Digital. All rights reserved.</p>
+  </footer>
+
+  <script>
+  const enquiryForm = document.getElementById('enquiryForm');
+  const preview = document.getElementById('preview');
+  const confirmationMessage = document.getElementById('confirmationMessage');
+  const errorMessage = document.getElementById('errorMessage');
+  let mediaBase64 = '';
+  let mediaName = '';
+
+  document.getElementById('media').addEventListener('change', function () {
+    const file = this.files[0];
+    preview.innerHTML = '';
+    mediaBase64 = '';
+    mediaName = '';
+
+    if (!file) return;
+
+    mediaName = file.name;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      mediaBase64 = e.target.result;
+
+      if (file.type.startsWith('image')) {
+        preview.innerHTML = `<img src="${mediaBase64}" style="max-width:100%;max-height:200px;border-radius:8px;">`;
+      } else if (file.type.startsWith('video')) {
+        preview.innerHTML = `<video controls src="${mediaBase64}" style="max-width:100%;max-height:200px;border-radius:8px;"></video>`;
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+
+  enquiryForm.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const submitBtn = this.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Submitting...';
+    confirmationMessage.style.display = 'none';
+    errorMessage.style.display = 'none';
+
+    const formData = {
+      serviceType: document.getElementById('serviceType').value,
+      projectTitle: document.getElementById('projectTitle').value,
+      description: document.getElementById('description').value,
+      fullName: document.getElementById('fullName').value,
+      email: document.getElementById('email').value,
+      phone: document.getElementById('phone').value,
+      budget: document.getElementById('budget').value,
+      mediaBase64,
+      mediaName
+    };
+
+    try {
+      const response = await fetch('/api/enquiries', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        confirmationMessage.style.display = 'block';
+        enquiryForm.reset();
+        preview.innerHTML = '';
+      } else {
+        throw new Error('Failed to submit');
+      }
+    } catch (err) {
+      console.error(err);
+      errorMessage.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = 'Submit Enquiry';
+    }
+  });
+</script>
+</body>
+</html>
