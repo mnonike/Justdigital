@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Submitted Enquiries - Just Digital</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #1e1e2f;
+      color: #fff;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #00f7ff;
+    }
+
+    .enquiry-list {
+      max-width: 900px;
+      margin: 30px auto;
+    }
+
+    .enquiry-item {
+      background: #2c2c3f;
+      border: 1px solid rgba(0, 247, 255, 0.2);
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+
+    .enquiry-header {
+      padding: 15px;
+      cursor: pointer;
+      font-weight: bold;
+      border-bottom: 1px solid rgba(0, 247, 255, 0.1);
+    }
+
+    .enquiry-header:hover {
+      background: #383850;
+    }
+
+    .enquiry-details {
+      display: none;
+      padding: 15px;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .detail-row {
+      margin-bottom: 10px;
+    }
+
+    .detail-row strong {
+      display: inline-block;
+      width: 150px;
+      color: #aaa;
+    }
+
+    .whatsapp-btn,
+    .delete-btn {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      color: white;
+    }
+
+    .whatsapp-btn {
+      background-color: #25d366;
+      margin-right: 10px;
+    }
+
+    .whatsapp-btn:hover {
+      background-color: #1ebe5d;
+    }
+
+    .delete-btn {
+      background-color: #ff4d4d;
+      cursor: pointer;
+      border: none;
+    }
+
+    .delete-btn:hover {
+      background-color: #e60000;
+    }
+
+    .media-preview img,
+    .media-preview video {
+      max-width: 100%;
+      max-height: 300px;
+      margin-top: 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(0, 247, 255, 0.3);
+    }
+
+    .no-data {
+      text-align: center;
+      color: #aaa;
+      margin-top: 50px;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Submitted Enquiries</h1>
+  <div class="enquiry-list" id="enquiryList"></div>
+
+  <script>
+    async function loadEnquiries() {
+      try {
+        const response = await fetch('/api/enquiries');
+        const enquiries = await response.json();
+        const enquiryList = document.getElementById('enquiryList');
+        enquiryList.innerHTML = '';
+
+        if (enquiries.length === 0) {
+          enquiryList.innerHTML = '<p class="no-data">No submissions found.</p>';
+          return;
+        }
+
+        enquiries.forEach((entry) => {
+          const item = document.createElement('div');
+          item.className = 'enquiry-item';
+
+          const header = document.createElement('div');
+          header.className = 'enquiry-header';
+          header.textContent = `${entry.projectTitle} — ${entry.fullName}`;
+
+          const details = document.createElement('div');
+          details.className = 'enquiry-details';
+
+          const phone = entry.phone.replace(/\D/g, '');
+          const message = encodeURIComponent(
+            `Hello ${entry.fullName},\n\nThank you for your enquiry about "${entry.projectTitle}". We've received your request and our team at Just Digital will get back to you shortly.\n\nBest regards,\nJust Digital Team`
+          );
+          const whatsappLink = `https://wa.me/${phone}?text=${message}`;
+
+          let mediaPreview = '';
+          if (entry.file) {
+            const ext = entry.file.split('.').pop().toLowerCase();
+            if (['mp4', 'webm', 'ogg'].includes(ext)) {
+              mediaPreview = `<video controls src="/uploads/${entry.file}" style="max-width: 100%; max-height: 300px; border-radius: 6px;"></video>`;
+            } else if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext)) {
+              mediaPreview = `<img src="/uploads/${entry.file}" style="max-width: 100%; max-height: 300px; border-radius: 6px;">`;
+            } else {
+              mediaPreview = `<a href="/uploads/${entry.file}" target="_blank">Download file</a>`;
+            }
+          }
+
+          details.innerHTML = `
+            <div class="detail-row"><strong>Full Name:</strong> ${entry.fullName}</div>
+            <div class="detail-row"><strong>Email:</strong> ${entry.email}</div>
+            <div class="detail-row"><strong>Phone:</strong> ${entry.phone}</div>
+            <div class="detail-row"><strong>Service Type:</strong> ${entry.serviceType}</div>
+            <div class="detail-row"><strong>Budget:</strong> ${entry.budget}</div>
+            <div class="detail-row"><strong>Description:</strong> ${entry.description}</div>
+            <div class="detail-row"><strong>Submitted:</strong> ${new Date(entry.timestamp).toLocaleString()}</div>
+            ${entry.file ? `<div class="detail-row"><strong>Media:</strong><div class="media-preview">${mediaPreview}</div></div>` : ''}
+            <a class="whatsapp-btn" href="${whatsappLink}" target="_blank">Message on WhatsApp</a>
+            <button class="delete-btn" data-id="${entry.id}">Delete</button>
+          `;
+
+          header.addEventListener('click', () => {
+            details.style.display = details.style.display === 'block' ? 'none' : 'block';
+          });
+
+          item.appendChild(header);
+          item.appendChild(details);
+          enquiryList.appendChild(item);
+        });
+
+        // Delete logic
+        document.querySelectorAll('.delete-btn').forEach(button => {
+          button.addEventListener('click', async (e) => {
+            const id = e.target.getAttribute('data-id');
+            if (confirm('Are you sure you want to delete this enquiry?')) {
+              try {
+                const response = await fetch(`/api/enquiries/${id}`, { method: 'DELETE' });
+                if (response.ok) {
+                  loadEnquiries();
+                } else {
+                  alert('Failed to delete enquiry');
+                }
+              } catch (error) {
+                console.error('Error deleting enquiry:', error);
+                alert('Error deleting enquiry');
+              }
+            }
+          });
+        });
+
+      } catch (error) {
+        console.error('Error loading enquiries:', error);
+        document.getElementById('enquiryList').innerHTML = '<p class="no-data">Error loading submissions</p>';
+      }
+    }
+
+    loadEnquiries();
+  </script>
+</body>
+</html>
